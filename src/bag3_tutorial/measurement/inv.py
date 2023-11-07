@@ -47,28 +47,13 @@ from bag3_testbenches.measurement.tran.digital import DigitalTranTB
 from bag3_testbenches.measurement.ac.base import ACTB
 
 class InvACMeas(MeasurementManager):
-    """A simple inverter measurement manager.
+    """A simple inverter AC measurement manager.
 
-    This class measures the input-output delay of an inverter, as well as the output rise/fall times.
-    A rail-to-rail 50% duty-cycle square wave is used as the input.
-    Average power is estimated using numpy.trapz.
+    This class measures the AC gain and bandwidthof an inverter. It also plots the Bode plots.
 
     Notes
     -----
     The specification dictionary has the following entries in addition to the default ones:
-
-    sim_params : Mapping[str, float]
-        Required entries are listed below.
-
-        t_per : float
-            The period of the input stimulus.
-        t_rf : float
-            The rise/fall time of the input.
-        c_load : float
-            The load capacitance at the output.
-
-    sim_envs : Sequence[str]
-        The sequence of corners/simulation environments to characterize over.
 
     plot : bool
         Optional. True to plot time-domain waveforms for debug. Defaults to False.
@@ -163,41 +148,6 @@ class InvACMeas(MeasurementManager):
             gain=gain_dc,
             freq_3dB=freq_3dB,
         )
-
-    @staticmethod
-    def plot_results(results: Sequence[Mapping[str, Any]], plot_dir: Path) -> None:
-        """Plots and saves results into a PDF.
-
-        Parameters
-        ----------
-        results : Sequence[Mapping[str, Any]]
-            The measurement results.
-        plot_dir : Path
-            The directory to save plots.
-        """
-        sim_data: Mapping[str, SimData] = results['sim_data']
-        data0 = next(iter(sim_data.values()))
-        swp_names = data0.sweep_params[1:-1]  # remove corner and time axes
-        swp_shape = data0.data_shape[:-1]
-        fvecs = {sim_env: np.reshape(data['freq'], data.data_shape) for sim_env, data in sim_data.items()}
-
-        with PdfPages(str(plot_dir / 'ac.pdf')) as pdf:
-            for i in np.ndindex(swp_shape):
-                fig, [ax0, ax1] = plt.subplots(2, 1, constrained_layout=True)
-                sfx = ', '.join([f'{k} = {data0.get_param_value(k)[i]}' for k in swp_names])
-                fig.suptitle(f'Inverter Input & Output, {sfx}')
-                ax0.set(xlabel='Time (s)', ylabel='in (V)')
-                ax1.set(xlabel='Time (s)', ylabel='out (V)')
-                ax0.grid()
-                ax1.grid()
-                for sim_env, data in sim_data.items():
-                    time = fvecs[sim_env][i]
-                    ax0.plot(time, data['in'][i], label=sim_env)
-                    ax1.plot(time, data['out'][i], label=sim_env)
-                ax0.legend()
-                ax1.legend()
-                pdf.savefig()
-                plt.close(fig)
 
 
 class InvMeas(MeasurementManager):
