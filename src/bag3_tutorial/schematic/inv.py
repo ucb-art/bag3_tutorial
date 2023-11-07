@@ -71,14 +71,16 @@ class bag3_tutorial__inv(Module):
             th_n='nmos threshold flavor.',
             seg_p='segments of pmos',
             seg_n='segments of nmos',
+            stack_n='stack of nmos',
+            stack_p='stack of nmos',
         )
 
     @classmethod
-    def get_default_param_values(cls) -> Dict[str, Any]:
+    def get_default_param_values(cls) -> Mapping[str, Any]:
         return dict()
 
     def design(self, seg_p: int, seg_n: int, lch: int, w_p: int, w_n: int, th_p: str,
-               th_n: str) -> None:
+               th_n: str, stack_n: int, stack_p: int) -> None:
         """To be overridden by subclasses to design this module.
 
         This method should fill in values for all parameters in
@@ -94,5 +96,5 @@ class bag3_tutorial__inv(Module):
         restore_instance()
         array_instance()
         """
-        self.design_transistor('XN', w=w_n, lch=lch, seg=seg_n, intent=th_n)
-        self.design_transistor('XP', w=w_p, lch=lch, seg=seg_n, intent=th_n)
+        self.design_transistor('XN', w=w_n, lch=lch, seg=seg_n, intent=th_n, stack=stack_n, m='mn')
+        self.design_transistor('XP', w=w_p, lch=lch, seg=seg_n, intent=th_n, stack=stack_p, m='mp')

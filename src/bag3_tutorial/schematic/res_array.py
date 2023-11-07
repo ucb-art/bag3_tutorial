@@ -72,24 +72,32 @@ class bag3_tutorial__res_array(Module):
         )
 
     @classmethod
-    def get_default_param_values(cls) -> Dict[str, Any]:
+    def get_default_param_values(cls) -> Mapping[str, Any]:
         return dict()
 
-    def design(self, w: int, l: int, res_type: str, nx: int, ny: int) -> None:
-        """To be overridden by subclasses to design this module.
+    def design(self, w: int, l: int, res_type: str, nser: int, npar: int) -> None:
+        unit_params = {'w': w, 'l': l, 'intent': res_type}
+        self.design_resistor('XRES', unit_params, nser=nser, npar=npar, mid='mid')
 
-        This method should fill in values for all parameters in
-        self.parameters.  To design instances of this module, you can
-        call their design() method or any other ways you coded.
-
-        To modify schematic structure, call:
-
-        rename_pin()
-        delete_instance()
-        replace_instance_master()
-        reconnect_instance_terminal()
-        restore_instance()
-        array_instance()
+        # Alternate approach
         """
-        # Design unit cell
-        self.instances['XRES'].design(w=w, l=l, intent=res_type)
+        unit_params = {'w': w, 'l': l, 'intent': res_type}
+        self.design_resistor('XRES', unit_params)
+
+        # Array series instances
+        if nser > 1:
+            inst_names = [f'XRES{idx}' for idx in range(nser)]
+            inst_conns = []
+            for idx in range(nser):
+                pname = 'top' if idx == 0 else f'mid<{idx - 1}>'
+                mname = 'bottom' if idx == nser - 1 else f'mid<{idx}>'
+                inst_conns.append({'PLUS': pname, 'MINUS': mname})
+            self.array_instance('XRES', inst_names, inst_conns, dy=300)
+        else:
+            inst_names, inst_conns = ['XRES'], []
+
+        # Array parallel instances using naming
+        for name in inst_names:
+            self.rename_instance(name, f'{name}<{npar-1}:0>')
+        """
+                
