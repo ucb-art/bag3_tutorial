@@ -117,8 +117,8 @@ class InvCore(MOSBase):
             raise ValueError(f'MOSBasePlaceInfo top layer must be at least {vm_layer}')
 
         # --- Step 2: Placement --- #
-        nports = self.add_mos(ridx_n, 0, seg_n, w=w_n, stack=stack_n)
-        pports = self.add_mos(ridx_p, 0, seg_p, w=w_p, stack=stack_p)
+        nports = self.add_mos(ridx_n, 0, seg_n, w=w_n)
+        pports = self.add_mos(ridx_p, 0, seg_p, w=w_p)
 
         self.set_mos_size()
 
