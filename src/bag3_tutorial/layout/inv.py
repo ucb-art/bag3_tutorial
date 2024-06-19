@@ -30,7 +30,7 @@
 
 from typing import Any, Dict, Optional, Union, Mapping, Type, List
 
-from pybag.enum import MinLenMode
+from pybag.enum import MinLenMode, RoundMode
 
 from bag.util.math import HalfInt
 from bag.util.immutable import Param

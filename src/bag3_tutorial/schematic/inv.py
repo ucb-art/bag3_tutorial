@@ -77,7 +77,7 @@ class bag3_tutorial__inv(Module):
 
     @classmethod
     def get_default_param_values(cls) -> Mapping[str, Any]:
-        return dict()
+        return dict(stack_n=1, stack_p=1)
 
     def design(self, seg_p: int, seg_n: int, lch: int, w_p: int, w_n: int, th_p: str,
                th_n: str, stack_n: int, stack_p: int) -> None:
@@ -96,5 +96,5 @@ class bag3_tutorial__inv(Module):
         restore_instance()
         array_instance()
         """
-        self.design_transistor('XN', w=w_n, lch=lch, seg=seg_n, intent=th_n, stack=stack_n, m='mn')
-        self.design_transistor('XP', w=w_p, lch=lch, seg=seg_n, intent=th_n, stack=stack_p, m='mp')
+        self.design_transistor('XN', w=w_n, lch=lch, seg=seg_n, intent=th_n, stack=stack_n, m=1)
+        self.design_transistor('XP', w=w_p, lch=lch, seg=seg_p, intent=th_p, stack=stack_p, m=1)
